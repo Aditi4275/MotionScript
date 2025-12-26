@@ -2,7 +2,6 @@
 
 Transform text prompts into stunning mathematical animations using AI and Manim.
 
-![ManimGen Preview](https://via.placeholder.com/800x400?text=ManimGen+Preview)
 
 ## Features
 
