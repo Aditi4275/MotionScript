@@ -162,13 +162,6 @@ Visit [http://localhost:3000](http://localhost:3000)
 | POST | `/api/render/export/{id}` | Export full project |
 | POST | `/api/audio/upload/{id}` | Upload voice-over |
 
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
-
 ## License
 
 MIT License - see [LICENSE](LICENSE) for details.

@@ -20,9 +20,15 @@ const suggestionPrompts = [
 export function PromptInput({ onSubmit, isLoading = false, disabled = false }: PromptInputProps) {
     const [prompt, setPrompt] = useState("");
     const [showSuggestions, setShowSuggestions] = useState(true);
+    const [shake, setShake] = useState(false);
 
     const handleSubmit = useCallback(async () => {
-        if (!prompt.trim() || isLoading || disabled) return;
+        if (!prompt.trim()) {
+            setShake(true);
+            setTimeout(() => setShake(false), 500);
+            return;
+        }
+        if (isLoading || disabled) return;
         await onSubmit(prompt.trim());
         setPrompt("");
         setShowSuggestions(false);
@@ -46,7 +52,11 @@ export function PromptInput({ onSubmit, isLoading = false, disabled = false }: P
     return (
         <div className="space-y-4">
             <div className="relative">
-                <div className="card p-0 overflow-hidden">
+                <motion.div
+                    className={`card p-0 overflow-hidden ${shake ? 'ring-2 ring-red-500' : ''}`}
+                    animate={shake ? { x: [-10, 10, -10, 10, 0] } : {}}
+                    transition={{ duration: 0.4 }}
+                >
                     <textarea
                         value={prompt}
                         onChange={(e) => setPrompt(e.target.value.slice(0, maxChars))}
@@ -64,8 +74,8 @@ export function PromptInput({ onSubmit, isLoading = false, disabled = false }: P
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             onClick={handleSubmit}
-                            disabled={!prompt.trim() || isLoading || disabled}
-                            className="btn btn-primary h-10 w-10 p-0 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled={isLoading || disabled}
+                            className={`btn btn-primary h-10 w-10 p-0 rounded-xl ${!prompt.trim() ? 'opacity-50' : ''} disabled:cursor-not-allowed`}
                         >
                             {isLoading ? (
                                 <Loader2 className="w-5 h-5 animate-spin" />
@@ -74,7 +84,7 @@ export function PromptInput({ onSubmit, isLoading = false, disabled = false }: P
                             )}
                         </motion.button>
                     </div>
-                </div>
+                </motion.div>
             </div>
 
             <AnimatePresence>
@@ -107,16 +117,18 @@ export function PromptInput({ onSubmit, isLoading = false, disabled = false }: P
                 )}
             </AnimatePresence>
 
-            {isLoading && (
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="flex items-center gap-2 text-sm text-[var(--primary)]"
-                >
-                    <Sparkles className="w-4 h-4 animate-pulse" />
-                    <span>Generating Manim code...</span>
-                </motion.div>
-            )}
-        </div>
+            {
+                isLoading && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="flex items-center gap-2 text-sm text-[var(--primary)]"
+                    >
+                        <Sparkles className="w-4 h-4 animate-pulse" />
+                        <span>Generating Manim code...</span>
+                    </motion.div>
+                )
+            }
+        </div >
     );
 }
